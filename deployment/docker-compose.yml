@@ -1,4 +1,4 @@
-# PUC Minas - Bakta Docker Compose
+# Bakta Flow Docker Compose
 # Orquestração de containers para o ambiente Bakta
 
 services:

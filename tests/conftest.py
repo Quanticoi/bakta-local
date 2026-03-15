@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-PUC Minas - Bakta Test Configuration
+Bakta Flow Test Configuration
 Configuração e fixtures para pytest
 """
 

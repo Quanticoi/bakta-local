@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-PUC Minas - Bakta Pipeline Demo
+Bakta Flow Pipeline Demo
 Demonstração do pipeline em modo simulação (sem Bakta instalado)
 """
 
@@ -189,7 +189,7 @@ Files generated:
 def main():
     """Função principal."""
     print("\n" + "="*60)
-    print("  PUC Minas - Bakta Pipeline DEMO")
+    print("  Bakta Flow Pipeline DEMO")
     print("  (Modo Simulacao - Sem Bakta instalado)")
     print("="*60)
     

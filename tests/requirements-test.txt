@@ -1,4 +1,4 @@
-# PUC Minas - Bakta Test Dependencies
+# Bakta Flow Test Dependencies
 # Dependências para execução de testes
 
 # Test Framework

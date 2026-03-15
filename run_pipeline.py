@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-PUC Minas - Bakta Pipeline Runner
+Bakta Flow Pipeline Runner
 Script para executar o pipeline de anotação
 """
 
@@ -191,7 +191,7 @@ def show_job_details(job_id, output_dir="./resultados"):
 def main():
     """Função principal."""
     parser = argparse.ArgumentParser(
-        description="PUC Minas - Bakta Pipeline Runner",
+        description="Bakta Flow Pipeline Runner",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Exemplos:
@@ -260,7 +260,7 @@ Exemplos:
     args = parser.parse_args()
     
     print("\n" + "="*60)
-    print("  🧬 PUC Minas - Bakta Pipeline")
+    print("  🧬 Bakta Flow Pipeline")
     print("="*60)
     
     # Listar templates

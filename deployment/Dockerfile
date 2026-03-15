@@ -1,4 +1,4 @@
-# PUC Minas - Bakta Docker Image
+# Bakta Flow Docker Image
 # Imagem Docker completa para anotação genômica com Bakta
 
 FROM continuumio/miniconda3:latest

@@ -1,8 +1,8 @@
-# Arquitetura do PUC Minas - Bakta
+# Arquitetura do Bakta Flow
 
 ## Visão Geral da Arquitetura
 
-O PUC Minas - Bakta é uma aplicação web full-stack para anotação genômica bacteriana, construída com uma arquitetura em camadas que separa claramente as responsabilidades de frontend, backend e processamento de dados.
+O Bakta Flow é uma aplicação web full-stack para anotação genômica bacteriana, construída com uma arquitetura em camadas que separa claramente as responsabilidades de frontend, backend e processamento de dados.
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐

@@ -1,4 +1,4 @@
-# Relatório de Testes - PUC Minas Bakta
+# Relatório de Testes - Bakta Flow
 
 **Data:** 2026-03-15  
 **Executor:** Teste Automatizado Completo
@@ -227,7 +227,7 @@ O sistema está funcional e pronto para uso. Todos os componentes críticos fora
 
 ✅ **SISTEMA APROVADO**
 
-Todos os testes críticos passaram. O sistema PUC Minas - Bakta está:
+Todos os testes críticos passaram. O sistema Bakta Flow está:
 - Estruturalmente completo
 - Funcionalmente operacional
 - Documentado adequadamente

@@ -1,5 +1,5 @@
 /**
- * PUC Minas - Bakta Web Application
+ * Bakta Flow Web Application
  * JavaScript principal da interface
  */
 
@@ -615,6 +615,14 @@ function formatNumber(num) {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function formatPercent(value, decimals = 2) {
+    const n = Number(value);
+    if (Number.isNaN(n)) {
+        return '-';
+    }
+    return `${n.toFixed(decimals)}%`;
+}
+
 function showToast(title, message, type = 'info') {
     const container = document.querySelector('.toast-container');
     const toastId = 'toast-' + Date.now();
@@ -652,6 +660,7 @@ function renderVisualization(jobData, containerId = 'visualization-container') {
     }
 
     const stats = jobData.stats || {};
+    const analytics = jobData.analytics || {};
     const files = jobData.files || {};
 
     const cds = stats.cds || 0;
@@ -697,6 +706,37 @@ function renderVisualization(jobData, containerId = 'visualization-container') {
         </div>
     `;
 
+    const topologyEntries = Object.entries(analytics.topology || {});
+    const featureTypeEntries = Object.entries(analytics.feature_types || {}).sort((a, b) => b[1] - a[1]);
+    const strandCounts = analytics.strand_counts || {};
+    const hasAnalytics = Object.keys(analytics).length > 0;
+
+    const analyticsHtml = hasAnalytics ? `
+        <div class="viz-analytics-card mt-3">
+            <h6 class="mb-3">Métricas analíticas extraídas pelo Bakta</h6>
+            <div class="viz-analytics-grid">
+                <div class="viz-analytics-item"><small>N90</small><strong>${formatNumber(analytics.n90 || 0)}</strong></div>
+                <div class="viz-analytics-item"><small>N ratio</small><strong>${formatPercent(analytics.n_ratio_pct || 0, 3)}</strong></div>
+                <div class="viz-analytics-item"><small>Coding density</small><strong>${formatPercent(analytics.coding_density_pct || 0, 2)}</strong></div>
+                <div class="viz-analytics-item"><small>Total de features</small><strong>${formatNumber(analytics.feature_total || 0)}</strong></div>
+                <div class="viz-analytics-item"><small>CDS hipotéticas</small><strong>${formatNumber(analytics.hypothetical_cds || 0)}</strong></div>
+                <div class="viz-analytics-item"><small>CDS funcionais</small><strong>${formatNumber(analytics.functional_cds || 0)}</strong></div>
+                <div class="viz-analytics-item"><small>Strand +</small><strong>${formatNumber(strandCounts.plus || 0)}</strong></div>
+                <div class="viz-analytics-item"><small>Strand -</small><strong>${formatNumber(strandCounts.minus || 0)}</strong></div>
+            </div>
+            <div class="viz-analytics-meta mt-3">
+                <p class="mb-2"><strong>Topologia dos replicons:</strong> ${topologyEntries.length > 0 ? topologyEntries.map(([k, v]) => `${k}: ${v}`).join(' | ') : 'não informado'}</p>
+                <p class="mb-2"><strong>Completude:</strong> ${analytics.completeness ? `complete: ${analytics.completeness.complete || 0} | incomplete: ${analytics.completeness.incomplete || 0}` : 'não informado'}</p>
+                <p class="mb-0"><strong>Tipos de features:</strong> ${featureTypeEntries.length > 0 ? featureTypeEntries.map(([k, v]) => `${k}: ${v}`).join(' | ') : 'não informado'}</p>
+            </div>
+        </div>
+    ` : `
+        <div class="viz-analytics-card mt-3">
+            <h6 class="mb-2">Métricas analíticas extraídas pelo Bakta</h6>
+            <p class="text-muted mb-0">Este job não possui o bloco analítico completo no resumo salvo. Execute um novo job para visualizar N90, coding density, distribuição por strand e topologia.</p>
+        </div>
+    `;
+
     container.innerHTML = `
         <div class="viz-grid">
             <div class="viz-card">
@@ -721,5 +761,6 @@ function renderVisualization(jobData, containerId = 'visualization-container') {
                 `}
             </div>
         </div>
+        ${analyticsHtml}
     `;
 }

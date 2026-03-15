@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-PUC Minas - Bakta Web API
+Bakta Flow Web API
 API Flask para interface web de anotação genômica
 """
 
@@ -130,7 +130,7 @@ def api_status():
     """Verifica status da API."""
     return jsonify({
         "status": "ok",
-        "service": "PUC Minas - Bakta API",
+        "service": "Bakta Flow API",
         "version": "1.0.0",
         "timestamp": datetime.now().isoformat()
     })
@@ -414,7 +414,7 @@ def server_error(e):
 
 if __name__ == '__main__':
     print("="*60)
-    print("PUC Minas - Bakta Web API")
+    print("Bakta Flow Web API")
     print("="*60)
     print(f"Upload folder: {UPLOAD_FOLDER}")
     print(f"Results folder: {RESULTS_FOLDER}")

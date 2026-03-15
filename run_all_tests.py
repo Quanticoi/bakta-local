@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-PUC Minas - Bakta - Teste Completo do Sistema
+Bakta Flow - Teste Completo do Sistema
 Executa todos os testes e verificações
 """
 
@@ -360,7 +360,7 @@ class TestRunner:
     def run_all(self):
         """Executa todos os testes."""
         print("\n" + "="*70)
-        print("  PUC MINAS - BAKTA - TESTE COMPLETO DO SISTEMA")
+        print("  BAKTA FLOW - TESTE COMPLETO DO SISTEMA")
         print("="*70)
         print(f"  Inicio: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         print("="*70)

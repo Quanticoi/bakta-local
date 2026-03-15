@@ -17,7 +17,7 @@ def run_command(cmd):
 
 def check_status():
     print("="*60)
-    print("  PUC Minas - Bakta - Status do Docker")
+    print("  Bakta Flow - Status do Docker")
     print("="*60)
     print()
     

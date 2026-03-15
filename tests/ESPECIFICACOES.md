@@ -1,4 +1,4 @@
-# Especificações de Testes - PUC Minas Bakta
+# Especificações de Testes - Bakta Flow
 
 ## Índice
 
@@ -14,7 +14,7 @@
 
 ### Objetivo
 
-Definir especificações completas de testes para garantir qualidade, confiabilidade e performance do sistema PUC Minas - Bakta.
+Definir especificações completas de testes para garantir qualidade, confiabilidade e performance do sistema Bakta Flow.
 
 ### Escopo
 

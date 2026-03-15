@@ -26,7 +26,7 @@
   
   <!-- Title -->
   <text x="600" y="40" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#1e293b">
-    PUC Minas - Bakta Architecture
+    Bakta Flow Architecture
   </text>
   
   <!-- Browser/Client Layer -->

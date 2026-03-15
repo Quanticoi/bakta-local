@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-PUC Minas - Bakta End-to-End Tests
+Bakta Flow End-to-End Tests
 Testes end-to-end usando Selenium (opcional)
 ou testes de API completos simulando usuário real
 """

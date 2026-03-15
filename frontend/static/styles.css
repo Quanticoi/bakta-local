@@ -485,6 +485,42 @@ body {
     margin-top: 0.15rem;
 }
 
+.viz-analytics-card {
+    border: 1px solid rgba(16, 24, 40, 0.1);
+    background: #fff;
+    border-radius: 14px;
+    padding: 1rem;
+}
+
+.viz-analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.7rem;
+}
+
+.viz-analytics-item {
+    border: 1px solid rgba(16, 24, 40, 0.1);
+    border-radius: 10px;
+    padding: 0.6rem;
+    background: #f8fafc;
+}
+
+.viz-analytics-item small {
+    display: block;
+    color: var(--muted);
+    font-size: 0.75rem;
+}
+
+.viz-analytics-item strong {
+    display: block;
+    margin-top: 0.15rem;
+}
+
+.viz-analytics-meta {
+    color: #334155;
+    font-size: 0.92rem;
+}
+
 @media (max-width: 991.98px) {
 
     .panel-body,
@@ -501,7 +537,8 @@ body {
 
     .viz-grid,
     .viz-kpis,
-    .viz-legend {
+    .viz-legend,
+    .viz-analytics-grid {
         grid-template-columns: 1fr;
     }
 }

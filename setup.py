@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-PUC Minas - Bakta Setup Script
+Bakta Flow Setup Script
 Script de configuração automática do ambiente
 """
 
@@ -205,7 +205,7 @@ def print_final_message():
 def main():
     """Função principal."""
     parser = argparse.ArgumentParser(
-        description="Setup do PUC Minas - Bakta"
+        description="Setup do Bakta Flow"
     )
     parser.add_argument(
         "--skip-conda",
@@ -227,7 +227,7 @@ def main():
     args = parser.parse_args()
     
     print("\n" + "="*60)
-    print("  🧬 PUC Minas - Bakta Setup")
+    print("  🧬 Bakta Flow Setup")
     print("="*60)
     
     # Verificar Conda

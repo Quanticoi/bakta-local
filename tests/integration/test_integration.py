@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-PUC Minas - Bakta Integration Tests
+Bakta Flow Integration Tests
 Testes de integração para o sistema completo
 """
 

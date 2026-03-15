@@ -1,4 +1,4 @@
-# Procedimentos de Testes - PUC Minas Bakta
+# Procedimentos de Testes - Bakta Flow
 
 ## Índice
 
@@ -247,7 +247,7 @@ Importe a coleção:
 ```json
 {
   "info": {
-    "name": "PUC Minas Bakta API",
+    "name": "Bakta Flow API",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/"
   },
   "item": [

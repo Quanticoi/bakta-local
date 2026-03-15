@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-PUC Minas - Bakta Pipeline Unit Tests
+Bakta Flow Pipeline Unit Tests
 Testes unitários para o módulo pipeline.py
 """
 

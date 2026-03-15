@@ -1,4 +1,4 @@
-# Documentação da API - PUC Minas Bakta
+# Documentação da API - Bakta Flow
 
 ## Base URL
 
@@ -31,7 +31,7 @@ GET /api/status
 ```json
 {
   "status": "ok",
-  "service": "PUC Minas - Bakta API",
+  "service": "Bakta Flow API",
   "version": "1.0.0",
   "timestamp": "2026-03-14T23:45:00.000000"
 }

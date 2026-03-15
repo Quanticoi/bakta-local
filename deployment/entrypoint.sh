@@ -1,11 +1,11 @@
 #!/bin/bash
-# PUC Minas - Bakta Entrypoint Script
+# Bakta Flow Entrypoint Script
 # Script de inicialização do container Bakta
 
 set -e
 
 echo "========================================"
-echo "  PUC Minas - Bakta Container"
+echo "  Bakta Flow Container"
 echo "========================================"
 
 # Ativar ambiente conda

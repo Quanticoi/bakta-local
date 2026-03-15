@@ -1,4 +1,4 @@
-# Guia de Deploy - PUC Minas Bakta
+# Guia de Deploy - Bakta Flow
 
 ## Índice
 
@@ -234,7 +234,7 @@ sudo certbot renew --dry-run
 ```ini
 # /etc/systemd/system/bakta.service
 [Unit]
-Description=PUC Minas Bakta
+Description=Bakta Flow
 After=network.target
 
 [Service]

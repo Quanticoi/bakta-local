@@ -1,4 +1,4 @@
-# PUC Minas - Bakta Environment Requirements
+# Bakta Flow Environment Requirements
 
 ## 📋 Visão Geral do Projeto
 
@@ -13,7 +13,7 @@ Este documento define os requisitos técnicos para criação de um ambiente comp
 1. Preparar ambiente Conda isolado para o Bakta
 2. Instalar e configurar a ferramenta Bakta com database light
 3. Criar pipeline de execução automatizado
-4. Desenvolver interface web elegante (PUC Minas - Bakta)
+4. Desenvolver interface web elegante (Bakta Flow)
 5. Implementar visualização de resultados com BaktaPlot
 6. Containerizar a aplicação com Docker
 
@@ -101,7 +101,7 @@ bakta --version
 
 ---
 
-## 🎨 Frontend (PUC Minas - Bakta)
+## 🎨 Frontend (Bakta Flow)
 
 ### Tecnologias:
 - **Framework:** Flask (Python)
@@ -112,7 +112,7 @@ bakta --version
 ### Funcionalidades:
 
 1. **Página Principal:**
-   - Header: "PUC Minas - Bakta"
+   - Header: "Bakta Flow"
    - Seletor de templates (pasta `data/`)
    - Upload de arquivo FASTA customizado
    - Botão "Executar Anotação"

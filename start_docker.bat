@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================
-echo  PUC Minas - Bakta Docker Startup
+echo  Bakta Flow Docker Startup
 echo ==========================================
 echo.
 echo Este processo pode levar 15-30 minutos

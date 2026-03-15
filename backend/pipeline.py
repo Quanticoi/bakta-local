@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-PUC Minas - Bakta Pipeline
+Bakta Flow Pipeline
 Pipeline de execução para anotação genômica com Bakta
 """
 
@@ -217,7 +217,8 @@ class BaktaPipeline:
             "output_dir": str(job_dir),
             "prefix": prefix,
             "files": {},
-            "stats": {}
+            "stats": {},
+            "analytics": {}
         }
         
         # Mapear arquivos de saída
@@ -265,10 +266,26 @@ class BaktaPipeline:
                     "pseudo": 0
                 }
 
+                feature_type_counts = {}
+                strand_counts = {"plus": 0, "minus": 0, "unknown": 0}
+                hypothetical_cds = 0
+
                 for feature in features:
                     ftype = str(feature.get("type", "")).lower()
+                    feature_type_counts[ftype] = feature_type_counts.get(ftype, 0) + 1
+
+                    strand = str(feature.get("strand", ""))
+                    if strand == "+":
+                        strand_counts["plus"] += 1
+                    elif strand == "-":
+                        strand_counts["minus"] += 1
+                    else:
+                        strand_counts["unknown"] += 1
+
                     if ftype == "cds":
                         feature_counts["cds"] += 1
+                        if bool(feature.get("hypothetical")) or str(feature.get("product", "")).lower() == "hypothetical protein":
+                            hypothetical_cds += 1
                     elif ftype == "trna":
                         feature_counts["trna"] += 1
                     elif ftype == "rrna":
@@ -291,6 +308,30 @@ class BaktaPipeline:
                     else gc_fraction_or_pct
                 )
 
+                coding_ratio = stats.get("coding_ratio", 0)
+                coding_density_pct = (
+                    coding_ratio * 100
+                    if isinstance(coding_ratio, (int, float)) and coding_ratio <= 1
+                    else coding_ratio
+                )
+
+                n_ratio = stats.get("n_ratio", 0)
+                n_ratio_pct = (
+                    n_ratio * 100
+                    if isinstance(n_ratio, (int, float)) and n_ratio <= 1
+                    else n_ratio
+                )
+
+                topology = {}
+                completeness = {"complete": 0, "incomplete": 0}
+                for seq in sequences:
+                    top = str(seq.get("topology", "unknown")).lower() or "unknown"
+                    topology[top] = topology.get(top, 0) + 1
+                    if bool(seq.get("complete")):
+                        completeness["complete"] += 1
+                    else:
+                        completeness["incomplete"] += 1
+
                 result["stats"] = {
                     "genome_size": stats.get("genome_size", stats.get("size", 0)),
                     "gc_content": gc_percent or 0,
@@ -305,6 +346,20 @@ class BaktaPipeline:
                     "pus": stats.get("feature_pseudo", feature_counts["pseudo"]),
                     "oris": stats.get("feature_ori", feature_counts["ori"]),
                     "gap": stats.get("feature_gap", feature_counts["gap"])
+                }
+
+                result["analytics"] = {
+                    "n90": stats.get("n90", 0),
+                    "n_ratio_pct": n_ratio_pct or 0,
+                    "coding_density_pct": coding_density_pct or 0,
+                    "feature_total": len(features),
+                    "hypothetical_cds": hypothetical_cds,
+                    "functional_cds": max(feature_counts["cds"] - hypothetical_cds, 0),
+                    "feature_types": feature_type_counts,
+                    "strand_counts": strand_counts,
+                    "topology": topology,
+                    "completeness": completeness,
+                    "raw_stats": stats
                 }
             except Exception as e:
                 logger.warning(f"Erro ao parsear JSON: {e}")
@@ -378,7 +433,7 @@ def main():
     import argparse
     
     parser = argparse.ArgumentParser(
-        description="PUC Minas - Bakta Pipeline"
+        description="Bakta Flow Pipeline"
     )
     parser.add_argument(
         "fasta",

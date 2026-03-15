@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-PUC Minas - Bakta API Unit Tests
+Bakta Flow API Unit Tests
 Testes unitários para a API Flask
 """
 

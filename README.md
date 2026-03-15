@@ -1,4 +1,4 @@
-# 🧬 BAKTA LOCAL PLATFORM
+# 🧬 Bakta Flow
 
 > **Desenvolvido por Rui Lima** - PUC Minas
 
@@ -32,7 +32,7 @@
 
 ## 🎯 Visão Geral
 
-O **Bakta Local Platform** é uma plataforma completa para anotação de genomas bacterianos, desenvolvida como projeto acadêmico da Pontifícia Universidade Católica de Minas Gerais (PUC Minas).
+O **Bakta Flow** é uma plataforma completa para anotação de genomas bacterianos, desenvolvida como projeto acadêmico da Pontifícia Universidade Católica de Minas Gerais (PUC Minas).
 
 ### 🚀 Por que Bakta?
 
@@ -113,8 +113,8 @@ O **Bakta Local Platform** é uma plataforma completa para anotação de genomas
 
 ```bash
 # 1. Clone o repositório
-git clone https://github.com/seu-usuario/pucminas-bakta.git
-cd pucminas-bakta/deployment
+git clone https://github.com/seu-usuario/bakta-flow.git
+cd bakta-flow/deployment
 
 # 2. Inicie com Docker Compose
 docker-compose up --build
@@ -215,8 +215,8 @@ conda --version
 
 ```bash
 # Clone
-git clone https://github.com/seu-usuario/pucminas-bakta.git
-cd pucminas-bakta
+git clone https://github.com/seu-usuario/bakta-flow.git
+cd bakta-flow
 
 # Criar ambiente
 conda env create -f environment.yml
