@@ -17,9 +17,9 @@ dependencies:
   - diamond
   - blast
   - hmmer
+  - ncbi-amrfinderplus
   - pip:
     - bakta
-    - baktaplot
     - flask
     - flask-cors
     - werkzeug

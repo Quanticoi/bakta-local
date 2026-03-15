@@ -1,494 +1,213 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PUC Minas - Bakta | Anotação Genômica</title>
-    
-    <!-- Bootstrap 5 CSS -->
+    <title>Bakta Flow | Anotacao Genomica Bacteriana</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
-    <!-- Custom CSS -->
     <link rel="stylesheet" href="static/styles.css">
-    
-    <style>
-        :root {
-            --puc-primary: #003366;
-            --puc-secondary: #0066CC;
-            --puc-accent: #FF6600;
-            --puc-light: #E6F2FF;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-        }
-        
-        .navbar {
-            background: linear-gradient(135deg, var(--puc-primary) 0%, var(--puc-secondary) 100%);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .navbar-brand {
-            font-weight: 700;
-            font-size: 1.5rem;
-        }
-        
-        .navbar-brand i {
-            color: var(--puc-accent);
-            margin-right: 10px;
-        }
-        
-        .card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-        }
-        
-        .card-header {
-            background: linear-gradient(135deg, var(--puc-light) 0%, #fff 100%);
-            border-bottom: 2px solid var(--puc-secondary);
-            border-radius: 15px 15px 0 0 !important;
-            font-weight: 600;
-            color: var(--puc-primary);
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, var(--puc-secondary) 0%, var(--puc-primary) 100%);
-            border: none;
-            border-radius: 25px;
-            padding: 10px 30px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-primary:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 20px rgba(0,102,204,0.4);
-        }
-        
-        .btn-success {
-            background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
-            border: none;
-            border-radius: 25px;
-        }
-        
-        .upload-area {
-            border: 3px dashed var(--puc-secondary);
-            border-radius: 15px;
-            padding: 40px;
-            text-align: center;
-            background: var(--puc-light);
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .upload-area:hover {
-            background: #d4e9ff;
-            border-color: var(--puc-primary);
-        }
-        
-        .upload-area.dragover {
-            background: #d4e9ff;
-            border-color: var(--puc-accent);
-            transform: scale(1.02);
-        }
-        
-        .upload-area i {
-            font-size: 3rem;
-            color: var(--puc-secondary);
-            margin-bottom: 15px;
-        }
-        
-        .stat-card {
-            text-align: center;
-            padding: 20px;
-        }
-        
-        .stat-card i {
-            font-size: 2.5rem;
-            color: var(--puc-secondary);
-            margin-bottom: 10px;
-        }
-        
-        .stat-card .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--puc-primary);
-        }
-        
-        .stat-card .stat-label {
-            color: #666;
-            font-size: 0.9rem;
-        }
-        
-        .job-item {
-            border-left: 4px solid var(--puc-secondary);
-            margin-bottom: 10px;
-            transition: all 0.3s ease;
-        }
-        
-        .job-item:hover {
-            background: var(--puc-light);
-        }
-        
-        .job-item.status-completed {
-            border-left-color: #28a745;
-        }
-        
-        .job-item.status-running {
-            border-left-color: var(--puc-accent);
-        }
-        
-        .job-item.status-error {
-            border-left-color: #dc3545;
-        }
-        
-        .progress {
-            height: 25px;
-            border-radius: 15px;
-            background: #e9ecef;
-        }
-        
-        .progress-bar {
-            border-radius: 15px;
-            font-weight: 600;
-        }
-        
-        .spinner-border {
-            color: var(--puc-secondary);
-        }
-        
-        .footer {
-            background: var(--puc-primary);
-            color: white;
-            padding: 20px 0;
-            margin-top: 50px;
-        }
-        
-        .badge-cds { background: #007bff; }
-        .badge-gene { background: #28a745; }
-        .badge-trna { background: #ffc107; color: #000; }
-        .badge-rrna { background: #dc3545; }
-        .badge-ncrna { background: #6f42c1; }
-        
-        .feature-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 10px;
-        }
-        
-        .toast-container {
-            position: fixed;
-            top: 80px;
-            right: 20px;
-            z-index: 1050;
-        }
-        
-        .template-card {
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .template-card:hover {
-            background: var(--puc-light);
-        }
-        
-        .template-card.selected {
-            background: var(--puc-light);
-            border: 2px solid var(--puc-secondary);
-        }
-        
-        #visualization-container {
-            min-height: 400px;
-            background: #f8f9fa;
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .dna-animation {
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-        
-        .fade-in {
-            animation: fadeIn 0.5s ease-in;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
 </head>
+
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-dark navbar-expand-lg">
+    <div class="bg-shape bg-shape-1"></div>
+    <div class="bg-shape bg-shape-2"></div>
+
+    <nav class="navbar navbar-expand-lg sticky-top app-nav">
         <div class="container">
-            <a class="navbar-brand" href="#">
-                <i class="bi bi-virus"></i>
-                PUC Minas - Bakta
+            <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+                <span class="brand-mark"><i class="bi bi-hexagon-fill"></i></span>
+                <span class="brand-title">Bakta Flow</span>
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Abrir menu">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#annotate">
-                            <i class="bi bi-play-circle"></i> Anotar
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#results">
-                            <i class="bi bi-journal-text"></i> Resultados
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#aboutModal">
-                            <i class="bi bi-info-circle"></i> Sobre
-                        </a>
-                    </li>
+                <ul class="navbar-nav ms-auto gap-lg-2">
+                    <li class="nav-item"><a class="nav-link" href="#annotate">Anotar</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#results">Resultados</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" data-bs-toggle="modal"
+                            data-bs-target="#aboutModal">Sobre</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Main Content -->
-    <div class="container my-5">
-        <!-- Header -->
-        <div class="row mb-5">
-            <div class="col-lg-8 mx-auto text-center">
-                <h1 class="display-4 fw-bold text-primary mb-3">
-                    <i class="bi bi-virus"></i> Anotação Genômica
-                </h1>
-                <p class="lead text-muted">
-                    Ferramenta moderna e rápida para anotação de genomas bacterianos 
-                    utilizando <strong>Bakta</strong>
-                </p>
-            </div>
-        </div>
-
-        <!-- Status Cards -->
-        <div class="row mb-5">
-            <div class="col-md-3">
-                <div class="card stat-card">
-                    <i class="bi bi-cpu"></i>
-                    <div class="stat-value" id="stat-jobs">0</div>
-                    <div class="stat-label">Jobs Executados</div>
+    <main class="container py-4 py-lg-5">
+        <section class="hero-panel mb-4 mb-lg-5">
+            <div class="row g-4 align-items-center">
+                <div class="col-lg-8">
+                    <p class="hero-kicker mb-2"><i class="bi bi-stars"></i> Pipeline de anotacao genomica
+                    </p>
+                    <h1 class="hero-title mb-3">Bakta Flow | Plataforma para anotacao genomica bacteriana</h1>
+                    <p class="hero-description mb-0">
+                        Orquestre analises com o Bakta, acompanhe os jobs em tempo real e exporte resultados tecnicos
+                        em formatos padrao para bioinformatica.
+                    </p>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card stat-card">
-                    <i class="bi bi-check-circle"></i>
-                    <div class="stat-value" id="stat-completed">0</div>
-                    <div class="stat-label">Concluídos</div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card stat-card">
-                    <i class="bi bi-grid-3x3"></i>
-                    <div class="stat-value" id="stat-cds">0</div>
-                    <div class="stat-label">CDS Anotados</div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card stat-card">
-                    <i class="bi bi-clock-history"></i>
-                    <div class="stat-value" id="stat-pending">0</div>
-                    <div class="stat-label">Em Andamento</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Annotation Section -->
-        <div class="row" id="annotate">
-            <div class="col-lg-8 mx-auto">
-                <div class="card">
-                    <div class="card-header">
-                        <i class="bi bi-play-circle"></i> Nova Anotação
-                    </div>
-                    <div class="card-body p-4">
-                        <!-- Template Selection -->
-                        <h6 class="mb-3">
-                            <i class="bi bi-collection"></i> Templates Disponíveis
-                        </h6>
-                        <div class="row mb-4" id="templates-container">
-                            <div class="col-12 text-center text-muted py-3">
-                                <div class="spinner-border spinner-border-sm"></div>
-                                Carregando templates...
-                            </div>
+                <div class="col-lg-4">
+                    <div class="hero-mini-card">
+                        <p class="mb-2 text-uppercase mini-label">Motor ativo</p>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="status-dot"></span>
+                            <strong>Bakta 1.9.x</strong>
                         </div>
-
-                        <!-- Divider -->
-                        <div class="d-flex align-items-center mb-4">
-                            <hr class="flex-grow-1">
-                            <span class="mx-3 text-muted">OU</span>
-                            <hr class="flex-grow-1">
-                        </div>
-
-                        <!-- File Upload -->
-                        <div class="upload-area mb-3" id="upload-area">
-                            <i class="bi bi-cloud-upload"></i>
-                            <h5>Arraste seu arquivo FASTA aqui</h5>
-                            <p class="text-muted mb-0">ou clique para selecionar</p>
-                            <small class="text-muted">(.fasta, .fna, .fa, .fas - max 100MB)</small>
-                            <input type="file" id="file-input" accept=".fasta,.fna,.fa,.fas" hidden>
-                        </div>
-                        
-                        <!-- Selected File -->
-                        <div id="selected-file" class="alert alert-info d-none">
-                            <i class="bi bi-file-earmark-text"></i>
-                            <span id="filename"></span>
-                            <button class="btn btn-sm btn-outline-danger float-end" id="remove-file">
-                                <i class="bi bi-x"></i>
-                            </button>
-                        </div>
-
-                        <!-- Options -->
-                        <div class="mb-3">
-                            <label class="form-label">Prefixo (opcional):</label>
-                            <input type="text" class="form-control" id="prefix-input" 
-                                   placeholder="Nome para os arquivos de saída">
-                        </div>
-
-                        <!-- Submit Button -->
-                        <button class="btn btn-primary btn-lg w-100" id="btn-annotate" disabled>
-                            <i class="bi bi-play-fill"></i> Iniciar Anotação
-                        </button>
+                        <small class="text-secondary d-block mt-2">Pronto para jobs em lote e analise individual</small>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Progress Section -->
-        <div class="row mt-4 d-none" id="progress-section">
-            <div class="col-lg-8 mx-auto">
-                <div class="card">
-                    <div class="card-header">
-                        <i class="bi bi-arrow-repeat"></i> Progresso da Anotação
-                    </div>
-                    <div class="card-body p-4">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="spinner-border me-3" id="progress-spinner"></div>
-                            <div>
-                                <h6 class="mb-0" id="progress-message">Iniciando...</h6>
-                                <small class="text-muted" id="progress-jobid"></small>
-                            </div>
-                        </div>
-                        <div class="progress">
-                            <div class="progress-bar progress-bar-striped progress-bar-animated" 
-                                 id="progress-bar" role="progressbar" style="width: 0%">
-                                0%
-                            </div>
-                        </div>
+        <section class="row g-3 g-lg-4 mb-4 mb-lg-5">
+            <div class="col-6 col-lg-3">
+                <article class="metric-card">
+                    <span class="metric-label">Jobs</span>
+                    <div class="metric-value" id="stat-jobs">0</div>
+                </article>
+            </div>
+            <div class="col-6 col-lg-3">
+                <article class="metric-card">
+                    <span class="metric-label">Concluidos</span>
+                    <div class="metric-value" id="stat-completed">0</div>
+                </article>
+            </div>
+            <div class="col-6 col-lg-3">
+                <article class="metric-card">
+                    <span class="metric-label">CDS anotados</span>
+                    <div class="metric-value" id="stat-cds">0</div>
+                </article>
+            </div>
+            <div class="col-6 col-lg-3">
+                <article class="metric-card">
+                    <span class="metric-label">Em andamento</span>
+                    <div class="metric-value" id="stat-pending">0</div>
+                </article>
+            </div>
+        </section>
+
+        <section id="annotate" class="content-panel mb-4 mb-lg-5">
+            <div class="panel-head d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <h2 class="panel-title mb-0"><i class="bi bi-rocket-takeoff"></i> Nova anotacao</h2>
+                <span class="panel-pill">FASTA ate 100 MB</span>
+            </div>
+
+            <div class="panel-body">
+                <h3 class="section-subtitle">Templates disponiveis</h3>
+                <div class="row" id="templates-container">
+                    <div class="col-12 text-center text-muted py-3">
+                        <div class="spinner-border spinner-border-sm me-2"></div>
+                        Carregando templates...
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Results Section -->
-        <div class="row mt-5" id="results">
-            <div class="col-12">
-                <h3 class="mb-4">
-                    <i class="bi bi-journal-text"></i> Resultados
-                </h3>
-                
-                <!-- Job List -->
+                <div class="text-divider"><span>ou envie seu arquivo</span></div>
+
+                <div class="upload-area" id="upload-area">
+                    <i class="bi bi-cloud-arrow-up"></i>
+                    <h4 class="mb-1">Arraste e solte seu FASTA</h4>
+                    <p class="mb-1">Clique para selecionar manualmente</p>
+                    <small>.fasta, .fna, .fa, .fas</small>
+                    <input type="file" id="file-input" accept=".fasta,.fna,.fa,.fas" hidden>
+                </div>
+
+                <div id="selected-file" class="selected-file-banner d-none mt-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-file-earmark-binary"></i>
+                        <span id="filename"></span>
+                    </div>
+                    <button class="btn btn-sm btn-outline-danger" id="remove-file" type="button">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+
+                <div class="mt-3">
+                    <label class="form-label" for="prefix-input">Prefixo de saida (opcional)</label>
+                    <input type="text" class="form-control" id="prefix-input" placeholder="Ex.: ecoli_lote_01">
+                </div>
+
+                <button class="btn btn-annotate w-100 mt-4" id="btn-annotate" disabled>
+                    <i class="bi bi-play-fill"></i>
+                    Iniciar anotacao
+                </button>
+            </div>
+        </section>
+
+        <section class="content-panel d-none mb-4 mb-lg-5" id="progress-section">
+            <div class="panel-head">
+                <h2 class="panel-title mb-0"><i class="bi bi-activity"></i> Progresso do processamento</h2>
+            </div>
+            <div class="panel-body">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="spinner-border" id="progress-spinner"></div>
+                    <div>
+                        <div id="progress-message">Iniciando...</div>
+                        <small class="text-secondary" id="progress-jobid"></small>
+                    </div>
+                </div>
+                <div class="progress app-progress" role="progressbar" aria-label="Progresso">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" id="progress-bar"
+                        style="width: 0%">0%</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="results" class="content-panel mb-4 mb-lg-5">
+            <div class="panel-head">
+                <h2 class="panel-title mb-0"><i class="bi bi-journals"></i> Historico de resultados</h2>
+            </div>
+            <div class="panel-body">
                 <div id="jobs-container">
                     <div class="text-center text-muted py-5">
-                        <i class="bi bi-inbox" style="font-size: 3rem;"></i>
-                        <p class="mt-3">Nenhum job executado ainda</p>
+                        <i class="bi bi-inbox" style="font-size: 2.5rem;"></i>
+                        <p class="mt-3 mb-0">Nenhum job executado ainda</p>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Visualization Section -->
-        <div class="row mt-5 d-none" id="visualization-section">
-            <div class="col-12">
-                <h3 class="mb-4">
-                    <i class="bi bi-eye"></i> Visualização do Genoma
-                </h3>
-                <div class="card">
-                    <div class="card-body" id="visualization-container">
-                        <div class="text-center text-muted">
-                            <i class="bi bi-circle" style="font-size: 5rem;"></i>
-                            <p class="mt-3">Selecione um job para visualizar</p>
-                        </div>
-                    </div>
+        <section class="content-panel d-none mb-4" id="visualization-section">
+            <div class="panel-head">
+                <h2 class="panel-title mb-0"><i class="bi bi-pie-chart"></i> Visualizacao</h2>
+            </div>
+            <div class="panel-body" id="visualization-container">
+                <div class="text-center text-muted">
+                    <i class="bi bi-circle" style="font-size: 4rem;"></i>
+                    <p class="mt-3 mb-0">Selecione um job para visualizar</p>
                 </div>
             </div>
-        </div>
-    </div>
+        </section>
+    </main>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <h5>PUC Minas - Bakta</h5>
-                    <p class="mb-0">Ferramenta de anotação genômica para estudos acadêmicos</p>
-                </div>
-                <div class="col-md-6 text-md-end">
-                    <p class="mb-0">
-                        <i class="bi bi-github"></i> 
-                        <a href="https://github.com/oschwengers/bakta" target="_blank" class="text-white">
-                            Bakta Official
-                        </a>
-                    </p>
-                    <small class="text-muted">v1.0.0 - 2026</small>
-                </div>
-            </div>
+    <footer class="app-footer">
+        <div class="container text-center">
+            <p class="mb-0">Developed by Rui Lima</p>
         </div>
     </footer>
 
-    <!-- About Modal -->
-    <div class="modal fade" id="aboutModal" tabindex="-1">
-        <div class="modal-dialog">
+    <div class="modal fade" id="aboutModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">
-                        <i class="bi bi-info-circle"></i> Sobre
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <h5 class="modal-title"><i class="bi bi-info-circle"></i> Sobre o projeto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
-                    <h6>PUC Minas - Bakta</h6>
-                    <p>Interface web para anotação genômica bacteriana utilizando a ferramenta Bakta.</p>
-                    
-                    <h6>Tecnologias</h6>
+                    <p>Aplicacao web para anotacao de genomas bacterianos com pipeline Bakta.</p>
                     <ul>
-                        <li><strong>Backend:</strong> Flask + Python</li>
-                        <li><strong>Frontend:</strong> Bootstrap 5 + JavaScript</li>
-                        <li><strong>Pipeline:</strong> Bakta + BioPython</li>
-                        <li><strong>Container:</strong> Docker</li>
+                        <li>Backend: Flask + Python</li>
+                        <li>Frontend: Bootstrap 5 + JavaScript</li>
+                        <li>Pipeline: Bakta</li>
+                        <li>Deploy: Docker e execucao local</li>
                     </ul>
-                    
-                    <h6>Referências</h6>
-                    <p class="small">
-                        Schwengers O., et al. (2021). Bakta: rapid & standardized annotation of bacterial genomes.
-                        <em>bioRxiv</em>. 
-                        <a href="https://github.com/oschwengers/bakta" target="_blank">GitHub</a>
-                    </p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
@@ -497,19 +216,14 @@
         </div>
     </div>
 
-    <!-- Job Details Modal -->
-    <div class="modal fade" id="jobModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
+    <div class="modal fade" id="jobModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">
-                        <i class="bi bi-journal-text"></i> Detalhes do Job
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <h5 class="modal-title"><i class="bi bi-journal-text"></i> Detalhes do job</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
-                <div class="modal-body" id="job-modal-content">
-                    <!-- Conteúdo dinâmico -->
-                </div>
+                <div class="modal-body" id="job-modal-content"></div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
                 </div>
@@ -517,12 +231,10 @@
         </div>
     </div>
 
-    <!-- Toast Container -->
     <div class="toast-container"></div>
 
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- App JS -->
     <script src="static/app.js"></script>
 </body>
+
 </html>

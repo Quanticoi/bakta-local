@@ -44,10 +44,10 @@ COPY frontend /app/frontend
 
 # Script para download do database (será executado no entrypoint se necessário)
 RUN echo '#!/bin/bash\n\
-if [ ! -d "/app/bakta-light" ] || [ -z "$(ls -A /app/bakta-light)" ]; then\n\
+    if [ ! -d "/app/bakta-light" ] || [ -z "$(ls -A /app/bakta-light)" ]; then\n\
     echo "Downloading Bakta database (light version)..."\n\
     bakta_db download --type light --output /app/bakta-light\n\
-fi' > /app/check_db.sh && chmod +x /app/check_db.sh
+    fi' > /app/check_db.sh && chmod +x /app/check_db.sh
 
 # Expor porta
 EXPOSE 5000
@@ -58,6 +58,6 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
 
 # Entrypoint
 COPY deployment/entrypoint.sh /app/entrypoint.sh
-RUN chmod +x /app/entrypoint.sh
+RUN sed -i 's/\r$//' /app/entrypoint.sh && chmod +x /app/entrypoint.sh
 
-ENTRYPOINT ["/app/entrypoint.sh"]
+ENTRYPOINT ["bash", "/app/entrypoint.sh"]

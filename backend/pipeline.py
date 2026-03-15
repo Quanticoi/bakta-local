@@ -48,6 +48,20 @@ class BaktaPipeline:
         self.output_dir.mkdir(parents=True, exist_ok=True)
         
         logger.info(f"Pipeline inicializado: db={self.db_path}, output={self.output_dir}")
+
+    def _resolve_db_path(self) -> Optional[Path]:
+        """Resolve caminho real do DB, aceitando estrutura com subpasta `db`."""
+        candidates = [
+            self.db_path,
+            self.db_path / "db",
+            self.db_path / "db-light"
+        ]
+
+        for candidate in candidates:
+            if (candidate / "version.json").exists():
+                return candidate
+
+        return None
     
     def check_bakta_installation(self) -> bool:
         """Verifica se o Bakta está instalado e acessível."""
@@ -67,10 +81,16 @@ class BaktaPipeline:
         return False
     
     def check_database(self) -> bool:
-        """Verifica se o database existe."""
-        if not self.db_path.exists():
-            logger.error(f"Database não encontrado: {self.db_path}")
+        """Verifica se o database está pronto para uso."""
+        resolved_db = self._resolve_db_path()
+        if resolved_db is None:
+            logger.error(
+                f"Database não pronto em: {self.db_path} (version.json ausente)"
+            )
             return False
+
+        # Atualiza para caminho efetivo do DB caso esteja em subdiretório.
+        self.db_path = resolved_db
         logger.info(f"Database encontrado: {self.db_path}")
         return True
     
@@ -107,6 +127,9 @@ class BaktaPipeline:
         
         if not self.check_bakta_installation():
             return False, {"error": "Bakta não instalado"}
+
+        if not self.check_database():
+            return False, {"error": "Database Bakta não está pronto"}
         
         # Gerar job_id se não fornecido
         if job_id is None:
@@ -207,6 +230,7 @@ class BaktaPipeline:
             "json": "Resultados JSON",
             "txt": "Resumo",
             "tsv": "Features TSV",
+            "png": "Visualização circular (PNG)",
             "svg": "Visualização circular"
         }
         
@@ -225,23 +249,62 @@ class BaktaPipeline:
             try:
                 with open(json_file, 'r') as f:
                     data = json.load(f)
-                    
-                # Extrair estatísticas relevantes
+
                 stats = data.get("stats", {})
+                features = data.get("features", [])
+                sequences = data.get("sequences", [])
+
+                feature_counts = {
+                    "cds": 0,
+                    "trna": 0,
+                    "rrna": 0,
+                    "ncrna": 0,
+                    "tmrna": 0,
+                    "gap": 0,
+                    "ori": 0,
+                    "pseudo": 0
+                }
+
+                for feature in features:
+                    ftype = str(feature.get("type", "")).lower()
+                    if ftype == "cds":
+                        feature_counts["cds"] += 1
+                    elif ftype == "trna":
+                        feature_counts["trna"] += 1
+                    elif ftype == "rrna":
+                        feature_counts["rrna"] += 1
+                    elif ftype in {"ncrna", "ncrna-region"}:
+                        feature_counts["ncrna"] += 1
+                    elif ftype == "tmrna":
+                        feature_counts["tmrna"] += 1
+                    elif ftype == "gap":
+                        feature_counts["gap"] += 1
+                    elif ftype.startswith("ori"):
+                        feature_counts["ori"] += 1
+                    elif ftype == "pseudogene":
+                        feature_counts["pseudo"] += 1
+
+                gc_fraction_or_pct = stats.get("gc", 0)
+                gc_percent = (
+                    gc_fraction_or_pct * 100
+                    if isinstance(gc_fraction_or_pct, (int, float)) and gc_fraction_or_pct <= 1
+                    else gc_fraction_or_pct
+                )
+
                 result["stats"] = {
-                    "genome_size": stats.get("genome_size", 0),
-                    "gc_content": stats.get("gc", 0),
-                    "n_contigs": stats.get("n_contigs", 0),
+                    "genome_size": stats.get("genome_size", stats.get("size", 0)),
+                    "gc_content": gc_percent or 0,
+                    "n_contigs": stats.get("n_contigs", len(sequences)),
                     "n50": stats.get("n50", 0),
-                    "cds": stats.get("feature_cds", 0),
-                    "genes": stats.get("feature_gene", 0),
-                    "trnas": stats.get("feature_trna", 0),
-                    "rrnas": stats.get("feature_rrna", 0),
-                    "ncrnas": stats.get("feature_ncrna", 0),
-                    "tmrnas": stats.get("feature_tmrna", 0),
-                    "pus": stats.get("feature_pseudo", 0),
-                    "oris": stats.get("feature_ori", 0),
-                    "gap": stats.get("feature_gap", 0)
+                    "cds": stats.get("feature_cds", feature_counts["cds"]),
+                    "genes": stats.get("feature_gene", feature_counts["cds"]),
+                    "trnas": stats.get("feature_trna", feature_counts["trna"]),
+                    "rrnas": stats.get("feature_rrna", feature_counts["rrna"]),
+                    "ncrnas": stats.get("feature_ncrna", feature_counts["ncrna"]),
+                    "tmrnas": stats.get("feature_tmrna", feature_counts["tmrna"]),
+                    "pus": stats.get("feature_pseudo", feature_counts["pseudo"]),
+                    "oris": stats.get("feature_ori", feature_counts["ori"]),
+                    "gap": stats.get("feature_gap", feature_counts["gap"])
                 }
             except Exception as e:
                 logger.warning(f"Erro ao parsear JSON: {e}")

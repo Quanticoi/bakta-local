@@ -26,22 +26,40 @@ fi
 
 # Verificar/Instalar database
 DB_PATH="${BAKTA_DB:-/app/bakta-light}"
+DB_READY_MARKER="$DB_PATH/.db-ready"
+DB_LOCK_FILE="$DB_PATH/.db-downloading"
 
 echo ""
 echo "📦 Verificando database em: $DB_PATH"
 
-if [ ! -d "$DB_PATH" ] || [ -z "$(ls -A $DB_PATH 2>/dev/null)" ]; then
-    echo "📥 Database não encontrado. Baixando versão light..."
-    echo "   (Isso pode levar alguns minutos na primeira execução)"
-    echo ""
-    
-    mkdir -p "$DB_PATH"
-    bakta_db download --type light --output "$DB_PATH"
-    
-    echo ""
-    echo "✅ Database instalado com sucesso!"
+mkdir -p "$DB_PATH"
+
+if [ -f "$DB_READY_MARKER" ]; then
+    echo "✅ Database marcado como pronto"
 else
-    echo "✅ Database encontrado"
+    echo "⚠️  Database ainda não pronto. O frontend/API subirá agora e o download seguirá em background."
+    echo "   (Anotações podem falhar até a conclusão do download.)"
+
+    if [ -f "$DB_LOCK_FILE" ] && ! pgrep -f "bakta_db download" >/dev/null 2>&1; then
+        echo "⚠️  Lock de download encontrado sem processo ativo. Reiniciando download..."
+        rm -f "$DB_LOCK_FILE"
+    fi
+
+    if [ ! -f "$DB_LOCK_FILE" ]; then
+        touch "$DB_LOCK_FILE"
+        (
+            echo "📥 Iniciando download do database light em background..."
+            if bakta_db download --type light --output "$DB_PATH"; then
+                touch "$DB_READY_MARKER"
+                echo "✅ Database instalado com sucesso!"
+            else
+                echo "❌ Falha no download do database Bakta"
+            fi
+            rm -f "$DB_LOCK_FILE"
+        ) &
+    else
+        echo "ℹ️  Download do database já está em andamento"
+    fi
 fi
 
 # Verificar estrutura de diretórios

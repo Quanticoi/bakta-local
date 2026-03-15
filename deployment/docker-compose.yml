@@ -1,8 +1,6 @@
 # PUC Minas - Bakta Docker Compose
 # Orquestração de containers para o ambiente Bakta
 
-version: '3.8'
-
 services:
   bakta-app:
     build:

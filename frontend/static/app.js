@@ -23,7 +23,7 @@ function initializeApp() {
     loadStats();
     loadJobs();
     setupEventListeners();
-    
+
     // Atualizar estatísticas periodicamente
     setInterval(loadStats, 30000);
     setInterval(loadJobs, 10000);
@@ -34,41 +34,41 @@ function setupEventListeners() {
     // Upload de arquivo
     const uploadArea = document.getElementById('upload-area');
     const fileInput = document.getElementById('file-input');
-    
+
     uploadArea.addEventListener('click', () => fileInput.click());
-    
+
     uploadArea.addEventListener('dragover', (e) => {
         e.preventDefault();
         uploadArea.classList.add('dragover');
     });
-    
+
     uploadArea.addEventListener('dragleave', () => {
         uploadArea.classList.remove('dragover');
     });
-    
+
     uploadArea.addEventListener('drop', (e) => {
         e.preventDefault();
         uploadArea.classList.remove('dragover');
-        
+
         const files = e.dataTransfer.files;
         if (files.length > 0) {
             handleFileSelect(files[0]);
         }
     });
-    
+
     fileInput.addEventListener('change', (e) => {
         if (e.target.files.length > 0) {
             handleFileSelect(e.target.files[0]);
         }
     });
-    
+
     // Remover arquivo selecionado
     document.getElementById('remove-file').addEventListener('click', () => {
         selectedFile = null;
         selectedSource = null;
         updateUI();
     });
-    
+
     // Iniciar anotação
     document.getElementById('btn-annotate').addEventListener('click', startAnnotation);
 }
@@ -108,18 +108,18 @@ async function apiPost(endpoint, data) {
 async function uploadFile(file) {
     const formData = new FormData();
     formData.append('file', file);
-    
+
     try {
         const response = await fetch(`${API_BASE_URL}/api/upload`, {
             method: 'POST',
             body: formData
         });
-        
+
         if (!response.ok) {
             const error = await response.json();
             throw new Error(error.error || `HTTP ${response.status}`);
         }
-        
+
         return await response.json();
     } catch (error) {
         console.error('Upload Error:', error);
@@ -132,7 +132,8 @@ async function uploadFile(file) {
 async function loadTemplates() {
     try {
         const data = await apiGet('/api/templates');
-        renderTemplates(data.templates);
+        const templates = Array.isArray(data.templates) ? data.templates : [];
+        renderTemplates(templates);
     } catch (error) {
         document.getElementById('templates-container').innerHTML = `
             <div class="col-12 text-center text-muted py-3">
@@ -144,7 +145,7 @@ async function loadTemplates() {
 
 function renderTemplates(templates) {
     const container = document.getElementById('templates-container');
-    
+
     if (templates.length === 0) {
         container.innerHTML = `
             <div class="col-12 text-center text-muted py-3">
@@ -153,7 +154,7 @@ function renderTemplates(templates) {
         `;
         return;
     }
-    
+
     container.innerHTML = templates.map(t => `
         <div class="col-md-4 mb-2">
             <div class="card template-card h-100" data-filename="${t.name}" data-source="template">
@@ -169,13 +170,13 @@ function renderTemplates(templates) {
             </div>
         </div>
     `).join('');
-    
+
     // Adicionar event listeners
     document.querySelectorAll('.template-card').forEach(card => {
         card.addEventListener('click', () => {
             document.querySelectorAll('.template-card').forEach(c => c.classList.remove('selected'));
             card.classList.add('selected');
-            
+
             selectedSource = 'template';
             selectedFile = {
                 filename: card.dataset.filename,
@@ -190,26 +191,26 @@ async function handleFileSelect(file) {
     // Validar extensão
     const allowedExts = ['fasta', 'fna', 'fa', 'fas'];
     const ext = file.name.split('.').pop().toLowerCase();
-    
+
     if (!allowedExts.includes(ext)) {
         showToast('Erro', 'Tipo de arquivo não permitido. Use: .fasta, .fna, .fa, .fas', 'danger');
         return;
     }
-    
+
     try {
         showToast('Upload', 'Enviando arquivo...', 'info');
         const result = await uploadFile(file);
-        
+
         selectedSource = 'upload';
         selectedFile = {
             filename: result.filename,
             name: result.original_name,
             size: result.size
         };
-        
+
         // Limpar seleção de template
         document.querySelectorAll('.template-card').forEach(c => c.classList.remove('selected'));
-        
+
         updateUI();
         showToast('Sucesso', 'Arquivo enviado com sucesso!', 'success');
     } catch (error) {
@@ -222,7 +223,7 @@ function updateUI() {
     const selectedFileDiv = document.getElementById('selected-file');
     const filenameSpan = document.getElementById('filename');
     const btnAnnotate = document.getElementById('btn-annotate');
-    
+
     if (selectedFile) {
         uploadArea.classList.add('d-none');
         selectedFileDiv.classList.remove('d-none');
@@ -241,35 +242,35 @@ async function startAnnotation() {
         showToast('Erro', 'Selecione um arquivo ou template primeiro', 'warning');
         return;
     }
-    
+
     const prefix = document.getElementById('prefix-input').value.trim();
-    
+
     const btn = document.getElementById('btn-annotate');
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Iniciando...';
-    
+
     try {
         const data = {
             source: selectedSource,
             filename: selectedFile.filename,
             prefix: prefix || undefined
         };
-        
+
         const result = await apiPost('/api/annotate', data);
-        
+
         currentJobId = result.job_id;
         showProgressSection();
         startPolling(currentJobId);
-        
+
         showToast('Sucesso', `Anotação iniciada! Job ID: ${currentJobId}`, 'success');
-        
+
         // Limpar seleção
         selectedFile = null;
         selectedSource = null;
         document.getElementById('prefix-input').value = '';
         document.querySelectorAll('.template-card').forEach(c => c.classList.remove('selected'));
         updateUI();
-        
+
     } catch (error) {
         btn.disabled = false;
         btn.innerHTML = '<i class="bi bi-play-fill"></i> Iniciar Anotação';
@@ -287,7 +288,7 @@ function startPolling(jobId) {
     if (pollingTimer) {
         clearInterval(pollingTimer);
     }
-    
+
     pollingTimer = setInterval(() => checkJobStatus(jobId), POLLING_INTERVAL);
 }
 
@@ -295,17 +296,17 @@ async function checkJobStatus(jobId) {
     try {
         const data = await apiGet(`/api/jobs/${jobId}/status`);
         updateProgress(data);
-        
+
         if (data.status === 'completed' || data.status === 'error') {
             clearInterval(pollingTimer);
             pollingTimer = null;
-            
+
             if (data.status === 'completed') {
                 onJobComplete(data);
             } else {
                 onJobError(data);
             }
-            
+
             loadJobs();
             loadStats();
         }
@@ -318,15 +319,15 @@ function updateProgress(data) {
     const progressBar = document.getElementById('progress-bar');
     const messageEl = document.getElementById('progress-message');
     const spinner = document.getElementById('progress-spinner');
-    
+
     const progress = data.progress || 0;
     progressBar.style.width = `${progress}%`;
     progressBar.textContent = `${progress}%`;
-    
+
     if (data.message) {
         messageEl.textContent = data.message;
     }
-    
+
     if (data.status === 'completed') {
         progressBar.classList.remove('progress-bar-animated');
         spinner.classList.add('d-none');
@@ -340,9 +341,13 @@ function updateProgress(data) {
 
 function onJobComplete(data) {
     showToast('Sucesso', 'Anotação concluída com sucesso!', 'success');
-    
+
     // Mostrar seção de visualização
     document.getElementById('visualization-section').classList.remove('d-none');
+
+    if (data.result) {
+        renderVisualization(data.result);
+    }
 }
 
 function onJobError(data) {
@@ -353,11 +358,11 @@ function onJobError(data) {
 async function loadStats() {
     try {
         const data = await apiGet('/api/stats');
-        
+
         document.getElementById('stat-jobs').textContent = data.total_jobs;
         document.getElementById('stat-completed').textContent = data.completed;
         document.getElementById('stat-cds').textContent = formatNumber(data.total_cds_annotated);
-        document.getElementById('stat-pending').textContent = 
+        document.getElementById('stat-pending').textContent =
             data.total_jobs - data.completed - data.errors;
     } catch (error) {
         console.error('Load stats error:', error);
@@ -375,7 +380,7 @@ async function loadJobs() {
 
 function renderJobs(jobs) {
     const container = document.getElementById('jobs-container');
-    
+
     if (jobs.length === 0) {
         container.innerHTML = `
             <div class="text-center text-muted py-5">
@@ -385,22 +390,22 @@ function renderJobs(jobs) {
         `;
         return;
     }
-    
+
     container.innerHTML = `
         <div class="list-group">
             ${jobs.map(job => renderJobItem(job)).join('')}
         </div>
     `;
-    
+
     // Adicionar event listeners para botões
     document.querySelectorAll('.btn-view-job').forEach(btn => {
         btn.addEventListener('click', () => viewJobDetails(btn.dataset.jobId));
     });
-    
+
     document.querySelectorAll('.btn-delete-job').forEach(btn => {
         btn.addEventListener('click', () => deleteJob(btn.dataset.jobId));
     });
-    
+
     document.querySelectorAll('.btn-download').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -413,23 +418,23 @@ function renderJobItem(job) {
     const status = job.status || 'unknown';
     const stats = job.stats || {};
     const runtimeStatus = job.runtime_status || {};
-    
+
     const statusClass = {
         'completed': 'status-completed',
         'running': 'status-running',
         'error': 'status-error'
     }[status] || '';
-    
+
     const statusIcon = {
         'completed': 'bi-check-circle-fill text-success',
         'running': 'bi-arrow-repeat text-warning',
         'error': 'bi-x-circle-fill text-danger'
     }[status] || 'bi-question-circle text-muted';
-    
-    const formattedDate = job.job_id ? 
-        `${job.job_id.substring(0, 4)}-${job.job_id.substring(4, 6)}-${job.job_id.substring(6, 8)} ${job.job_id.substring(9, 11)}:${job.job_id.substring(11, 13)}` : 
+
+    const formattedDate = job.job_id ?
+        `${job.job_id.substring(0, 4)}-${job.job_id.substring(4, 6)}-${job.job_id.substring(6, 8)} ${job.job_id.substring(9, 11)}:${job.job_id.substring(11, 13)}` :
         'Data desconhecida';
-    
+
     return `
         <div class="list-group-item job-item ${statusClass} fade-in">
             <div class="d-flex w-100 justify-content-between align-items-center">
@@ -456,15 +461,15 @@ function renderJobItem(job) {
                                 <i class="bi bi-download"></i> Download
                             </button>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item btn-download" href="#" 
+                                    <li><a class="dropdown-item btn-download" href="#" 
                                        data-job-id="${job.job_id}" data-file-type="json">JSON</a></li>
-                                <li><a class="dropdown-item btn-download" href="#" 
+                                    <li><a class="dropdown-item btn-download" href="#" 
                                        data-job-id="${job.job_id}" data-file-type="gff3">GFF3</a></li>
-                                <li><a class="dropdown-item btn-download" href="#" 
+                                    <li><a class="dropdown-item btn-download" href="#" 
                                        data-job-id="${job.job_id}" data-file-type="faa">Proteínas (FAA)</a></li>
-                                <li><a class="dropdown-item btn-download" href="#" 
+                                    <li><a class="dropdown-item btn-download" href="#" 
                                        data-job-id="${job.job_id}" data-file-type="ffn">Features (FFN)</a></li>
-                                <li><a class="dropdown-item btn-download" href="#" 
+                                    <li><a class="dropdown-item btn-download" href="#" 
                                        data-job-id="${job.job_id}" data-file-type="txt">Resumo</a></li>
                             </ul>
                         </div>
@@ -487,10 +492,10 @@ function renderJobItem(job) {
 async function viewJobDetails(jobId) {
     try {
         const job = await apiGet(`/api/jobs/${jobId}`);
-        
+
         const stats = job.stats || {};
         const files = job.files || {};
-        
+
         let filesHtml = '';
         if (Object.keys(files).length > 0) {
             filesHtml = `
@@ -508,7 +513,7 @@ async function viewJobDetails(jobId) {
                 </div>
             `;
         }
-        
+
         const content = `
             <div class="row">
                 <div class="col-md-6">
@@ -546,14 +551,28 @@ async function viewJobDetails(jobId) {
                     </div>
                 </div>
             </div>
+            <div class="row mt-3">
+                <div class="col-12">
+                    <h6>Visualização do Job</h6>
+                    <div id="job-modal-visualization"></div>
+                </div>
+            </div>
             ${filesHtml}
         `;
-        
+
         document.getElementById('job-modal-content').innerHTML = content;
-        
+
         const modal = new bootstrap.Modal(document.getElementById('jobModal'));
         modal.show();
-        
+
+        // Exibe o gráfico imediatamente dentro do modal para evitar confusão de navegação.
+        renderVisualization(job, 'job-modal-visualization');
+
+        // Também atualiza a seção de visualização abaixo da lista de resultados.
+        document.getElementById('visualization-section').classList.remove('d-none');
+        renderVisualization(job, 'visualization-container');
+        document.getElementById('visualization-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
     } catch (error) {
         console.error('View job error:', error);
     }
@@ -563,14 +582,14 @@ async function deleteJob(jobId) {
     if (!confirm(`Tem certeza que deseja remover o job ${jobId}?`)) {
         return;
     }
-    
+
     try {
         const response = await fetch(`${API_BASE_URL}/api/jobs/${jobId}`, {
             method: 'DELETE'
         });
-        
+
         if (!response.ok) throw new Error('Falha ao remover job');
-        
+
         showToast('Sucesso', 'Job removido com sucesso!', 'success');
         loadJobs();
         loadStats();
@@ -599,7 +618,7 @@ function formatNumber(num) {
 function showToast(title, message, type = 'info') {
     const container = document.querySelector('.toast-container');
     const toastId = 'toast-' + Date.now();
-    
+
     const toastHtml = `
         <div class="toast align-items-center text-white bg-${type} border-0" 
              id="${toastId}" role="alert" aria-live="assertive" aria-atomic="true">
@@ -613,57 +632,94 @@ function showToast(title, message, type = 'info') {
             </div>
         </div>
     `;
-    
+
     container.insertAdjacentHTML('beforeend', toastHtml);
-    
+
     const toastElement = document.getElementById(toastId);
     const toast = new bootstrap.Toast(toastElement, { delay: 5000 });
     toast.show();
-    
+
     toastElement.addEventListener('hidden.bs.toast', () => {
         toastElement.remove();
     });
 }
 
-// ============== VISUALIZAÇÃO (PLACEHOLDER) ==============
-function renderCircularVisualization(jobData) {
-    // Placeholder para visualização circular
-    // Em uma implementação completa, integrar com BaktaPlot ou D3.js
-    const container = document.getElementById('visualization-container');
-    
-    container.innerHTML = `
-        <div class="text-center">
-            <div class="position-relative d-inline-block">
-                <svg width="400" height="400" viewBox="0 0 400 400">
-                    <!-- Círculo externo -->
-                    <circle cx="200" cy="200" r="180" fill="none" stroke="#dee2e6" stroke-width="20"/>
-                    <!-- Arcos de CDS -->
-                    <path d="M 200 20 A 180 180 0 0 1 380 200" 
-                          fill="none" stroke="#007bff" stroke-width="15"/>
-                    <path d="M 380 200 A 180 180 0 0 1 200 380" 
-                          fill="none" stroke="#28a745" stroke-width="15"/>
-                    <path d="M 200 380 A 180 180 0 0 1 20 200" 
-                          fill="none" stroke="#ffc107" stroke-width="15"/>
-                    <path d="M 20 200 A 180 180 0 0 1 200 20" 
-                          fill="none" stroke="#dc3545" stroke-width="15"/>
-                    <!-- Centro -->
-                    <circle cx="200" cy="200" r="80" fill="#f8f9fa"/>
-                    <text x="200" y="190" text-anchor="middle" class="fs-4 fw-bold">Genoma</text>
-                    <text x="200" y="215" text-anchor="middle" class="small text-muted">
-                        ${formatNumber(jobData.stats?.genome_size || 0)} bp
-                    </text>
-                </svg>
+// ============== VISUALIZAÇÃO ==============
+function renderVisualization(jobData, containerId = 'visualization-container') {
+    const container = document.getElementById(containerId);
+    if (!container) {
+        return;
+    }
+
+    const stats = jobData.stats || {};
+    const files = jobData.files || {};
+
+    const cds = stats.cds || 0;
+    const genes = stats.genes || 0;
+    const trnas = stats.trnas || 0;
+    const rrnas = stats.rrnas || 0;
+    const ncrnas = stats.ncrnas || 0;
+    const total = Math.max(cds + trnas + rrnas + ncrnas, 1);
+
+    const cdsPct = Math.round((cds / total) * 100);
+    const trnaPct = Math.round((trnas / total) * 100);
+    const rrnaPct = Math.round((rrnas / total) * 100);
+    const ncrnaPct = Math.max(100 - cdsPct - trnaPct - rrnaPct, 0);
+
+    const svgAvailable = !!files.svg;
+    const pngAvailable = !!files.png;
+    const plotFileType = svgAvailable ? 'svg' : (pngAvailable ? 'png' : null);
+    const plotUrl = plotFileType ? `${API_BASE_URL}/api/jobs/${jobData.job_id}/files/${plotFileType}` : '';
+
+    const circularPlotHtml = plotFileType ? `
+        <div class="viz-circular-wrap">
+            <h6 class="mb-3">Mapa circular de sítios anotados</h6>
+            <div class="viz-circular-frame">
+                <img class="viz-circular-image" src="${plotUrl}" alt="Plot circular do job ${jobData.job_id}">
             </div>
             <div class="mt-3">
-                <span class="badge me-2" style="background: #007bff">CDS</span>
-                <span class="badge me-2" style="background: #28a745">Genes</span>
-                <span class="badge me-2" style="background: #ffc107; color: #000">tRNAs</span>
-                <span class="badge" style="background: #dc3545">rRNAs</span>
+                <a class="btn btn-sm btn-outline-primary" href="${plotUrl}" target="_blank">Abrir plot circular completo (${plotFileType.toUpperCase()})</a>
             </div>
-            <p class="text-muted mt-3 small">
-                <i class="bi bi-info-circle"></i> 
-                Visualização simplificada. Use BaktaPlot para visualização completa.
-            </p>
+        </div>
+    ` : `
+        <h6 class="mb-3">Distribuição de features anotadas</h6>
+        <div class="viz-donut" style="background: conic-gradient(#0284c7 0 ${cdsPct}%, #f59e0b ${cdsPct}% ${cdsPct + trnaPct}%, #ef4444 ${cdsPct + trnaPct}% ${cdsPct + trnaPct + rrnaPct}%, #8b5cf6 ${cdsPct + trnaPct + rrnaPct}% 100%);">
+            <div class="viz-donut-center">
+                <div class="viz-donut-title">${formatNumber(total)}</div>
+                <div class="viz-donut-sub">features</div>
+            </div>
+        </div>
+        <div class="viz-legend mt-3">
+            <span><i class="bi bi-square-fill" style="color:#0284c7"></i> CDS: ${formatNumber(cds)}</span>
+            <span><i class="bi bi-square-fill" style="color:#f59e0b"></i> tRNA: ${formatNumber(trnas)}</span>
+            <span><i class="bi bi-square-fill" style="color:#ef4444"></i> rRNA: ${formatNumber(rrnas)}</span>
+            <span><i class="bi bi-square-fill" style="color:#8b5cf6"></i> ncRNA: ${formatNumber(ncrnas)}</span>
+        </div>
+    `;
+
+    container.innerHTML = `
+        <div class="viz-grid">
+            <div class="viz-card">
+                ${circularPlotHtml}
+            </div>
+
+            <div class="viz-card">
+                <h6 class="mb-3">Resumo anotado do job ${jobData.job_id}</h6>
+                <div class="viz-kpis">
+                    <div><small>Tamanho do genoma</small><strong>${formatNumber(stats.genome_size || 0)} bp</strong></div>
+                    <div><small>GC content</small><strong>${(stats.gc_content || 0).toFixed(2)}%</strong></div>
+                    <div><small>Contigs</small><strong>${formatNumber(stats.n_contigs || 0)}</strong></div>
+                    <div><small>N50</small><strong>${formatNumber(stats.n50 || 0)}</strong></div>
+                    <div><small>Genes</small><strong>${formatNumber(genes)}</strong></div>
+                    <div><small>Status</small><strong>${jobData.status || 'completed'}</strong></div>
+                </div>
+
+                ${plotFileType ? `
+                    <p class="text-muted small mt-3 mb-0">Plot circular oficial gerado pelo Bakta.</p>
+                ` : `
+                    <p class="text-muted small mt-3 mb-0">Sem arquivo SVG/PNG neste job. Exibindo visualização de contingência por contagem.</p>
+                `}
+            </div>
         </div>
     `;
 }

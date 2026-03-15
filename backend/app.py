@@ -20,9 +20,10 @@ from werkzeug.utils import secure_filename
 from pipeline import BaktaPipeline
 
 # Configurações
-UPLOAD_FOLDER = Path("./data/uploads")
-RESULTS_FOLDER = Path("./resultados")
-TEMPLATES_FOLDER = Path("./data/templates")
+BASE_DIR = Path(__file__).resolve().parent.parent
+UPLOAD_FOLDER = BASE_DIR / "data" / "uploads"
+RESULTS_FOLDER = BASE_DIR / "resultados"
+TEMPLATES_FOLDER = BASE_DIR / "data" / "templates"
 ALLOWED_EXTENSIONS = {'fasta', 'fna', 'fa', 'fas'}
 MAX_CONTENT_LENGTH = 100 * 1024 * 1024  # 100MB
 
@@ -34,8 +35,8 @@ TEMPLATES_FOLDER.mkdir(parents=True, exist_ok=True)
 # Inicializar Flask
 app = Flask(
     __name__,
-    template_folder='../frontend',
-    static_folder='../frontend/static'
+    template_folder=str(BASE_DIR / 'frontend'),
+    static_folder=str(BASE_DIR / 'frontend' / 'static')
 )
 app.config['UPLOAD_FOLDER'] = str(UPLOAD_FOLDER)
 app.config['MAX_CONTENT_LENGTH'] = MAX_CONTENT_LENGTH
@@ -70,11 +71,15 @@ def run_annotation_async(job_id: str, fasta_path: str, prefix: str):
             "started_at": datetime.now().isoformat()
         }
         
+        meta_mode_enabled = os.environ.get("BAKTA_META_MODE", "false").lower() in {
+            "1", "true", "yes", "on"
+        }
+
         pipeline = BaktaPipeline(
             db_path=get_db_path(),
             output_dir=str(RESULTS_FOLDER),
             threads=4,
-            meta_mode=True
+            meta_mode=meta_mode_enabled
         )
         
         jobs_status[job_id]["progress"] = 10
@@ -205,6 +210,16 @@ def start_annotation():
     
     if not fasta_path.exists():
         return jsonify({"error": f"Arquivo não encontrado: {filename}"}), 404
+
+    # Validar prontidão do DB antes de iniciar thread de anotação.
+    precheck_pipeline = BaktaPipeline(
+        db_path=get_db_path(),
+        output_dir=str(RESULTS_FOLDER)
+    )
+    if not precheck_pipeline.check_database():
+        return jsonify({
+            "error": "Database Bakta ainda não está pronto. Aguarde o download/conclusão e tente novamente."
+        }), 503
     
     # Gerar job ID
     job_id = datetime.now().strftime("%Y%m%d_%H%M%S") + "_" + uuid.uuid4().hex[:8]
@@ -425,9 +440,12 @@ if __name__ == '__main__':
     print("Servidor iniciado em http://localhost:5000")
     print("="*60)
     
+    debug_mode = os.environ.get('FLASK_DEBUG', '0') == '1'
+
     app.run(
         host='0.0.0.0',
         port=5000,
-        debug=True,
+        debug=debug_mode,
+        use_reloader=debug_mode,
         threaded=True
     )
