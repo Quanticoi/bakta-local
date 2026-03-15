@@ -1,4 +1,4 @@
-# 🧬 PUC Minas - Bakta
+# 🧬 BAKTA LOCAL PLATFORM
 
 > **Desenvolvido por Rui Lima** - PUC Minas
 
@@ -36,7 +36,7 @@
 
 ## 🎯 Visão Geral
 
-O **PUC Minas - Bakta** é uma plataforma completa para anotação de genomas bacterianos, desenvolvida como projeto acadêmico da Pontifícia Universidade Católica de Minas Gerais (PUC Minas).
+O **Bakta Local Platform** é uma plataforma completa para anotação de genomas bacterianos, desenvolvida como projeto acadêmico da Pontifícia Universidade Católica de Minas Gerais (PUC Minas).
 
 ### 🚀 Por que Bakta?
 
