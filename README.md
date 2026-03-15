@@ -12,10 +12,6 @@
 
 ![PUC Minas](https://img.shields.io/badge/PUC-Minas-blue?style=for-the-badge&logo=graduation-cap)
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/oschwengers/bakta/main/images/bakta-logo.png" alt="Bakta Logo" width="200">
-</p>
-
 ---
 
 ## 📖 Sumário
@@ -518,8 +514,15 @@ O Bakta original também é licenciado sob GPLv3.
   Desenvolvido por Rui Lima como projeto acadêmico para anotação genômica bacteriana
 </p>
 
+<p align="center">
+  <a href="https://www.pucminas.br">
+    <img src="https://www.pucminas.br/posgraduacao/icafes/wp-content/uploads/sites/82/2019/07/logo-puc-minas.png" alt="PUC Minas" width="150">
+  </a>
+</p>
+
 ---
 
 <p align="center">
+  Feito com ❤️ em Belo Horizonte, Brasil<br>
   <em>2026 - PUC Minas</em>
 </p>
