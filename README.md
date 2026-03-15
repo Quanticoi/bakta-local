@@ -484,6 +484,8 @@ Contribuições são bem-vindas! Siga os passos:
 
 Se você usar este projeto em sua pesquisa, por favor cite:
 
+> Este projeto foi desenvolvido por **Rui Lima** como trabalho da disciplina **Algoritmos de Bioinformática** do curso de **Pós-Graduação da PUC Minas**.
+
 ```bibtex
 @article{schwengers2021bakta,
   title={Bakta: rapid and standardized annotation of bacterial genomes via alignment-free sequence identification},
@@ -511,9 +513,9 @@ O Bakta original também é licenciado sob GPLv3.
 
 <p align="center">
   <strong>PUC Minas</strong> - Pontifícia Universidade Católica de Minas Gerais<br>
-  Ciência da Computação | Bioinformática<br>
+  Pós-Graduação | Disciplina: Algoritmos de Bioinformática<br>
   <br>
-  Desenvolvido como projeto acadêmico para anotação genômica bacteriana
+  Desenvolvido por Rui Lima como projeto acadêmico para anotação genômica bacteriana
 </p>
 
 <p align="center">
